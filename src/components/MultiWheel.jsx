@@ -331,19 +331,21 @@ const MultiWheel = ({ onComplete, triggerSpin }) => {
 
       <h2 className="wheel-stage-title">{getStageTitle()}</h2>
 
-      <div
-        className="wheel-wrapper"
-        style={{
-          transform: `rotate(${rotation}deg)`,
-          transition: isAnimating ? 'none' : 'transform 0.1s ease-out',
-        }}
-      >
-        <canvas
-          ref={canvasRef}
-          className="wheel-canvas"
-          width={480}
-          height={480}
-        />
+      <div className="wheel-wrapper">
+        <div
+          className="wheel-inner"
+          style={{
+            transform: `rotate(${rotation}deg)`,
+            transition: isAnimating ? 'none' : 'transform 0.1s ease-out',
+          }}
+        >
+          <canvas
+            ref={canvasRef}
+            className="wheel-canvas"
+            width={480}
+            height={480}
+          />
+        </div>
       </div>
 
       <button
