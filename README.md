@@ -41,11 +41,28 @@ npm run preview
 
 The project is configured for deployment to `asp/WheelOfDrinks` on GitHub Pages.
 
+### First-Time Setup (Required)
+
+**You must enable GitHub Pages in your repository settings before the workflow can deploy:**
+
+1. Go to your repository on GitHub: `https://github.com/asp/WheelOfDrinks`
+2. Click on **Settings** (in the repository menu)
+3. Scroll down to **Pages** in the left sidebar
+4. Under **Source**, select **GitHub Actions** (not "Deploy from a branch")
+5. Save the settings
+
+### Automatic Deployment
+
+Once GitHub Pages is enabled:
 1. Push your code to the `main` branch
 2. The GitHub Actions workflow will automatically build and deploy to GitHub Pages
 3. Your app will be available at: `https://asp.github.io/WheelOfDrinks/`
 
-Alternatively, you can manually deploy:
+The deployment typically takes 1-2 minutes after pushing to main.
+
+### Manual Deployment (Alternative)
+
+If you prefer to deploy manually:
 1. Build the project: `npm run build`
 2. Push the `dist` folder to the `gh-pages` branch
 
