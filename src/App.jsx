@@ -85,9 +85,6 @@ function App() {
         </aside>
       </div>
 
-      <footer className="app-footer">
-        <p>The Wheel of Drinks by 0rt</p>
-      </footer>
     </div>
   )
 }
