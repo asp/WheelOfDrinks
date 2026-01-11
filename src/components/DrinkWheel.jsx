@@ -11,17 +11,18 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
   const anglePerSegment = numSegments > 0 ? (2 * Math.PI) / numSegments : 0
 
   const drawWheel = () => {
-    const canvas = canvasRef.current
-    if (!canvas || numSegments === 0) return
+    try {
+      const canvas = canvasRef.current
+      if (!canvas || numSegments === 0) return
 
-    // Handle high DPI displays
-    const dpr = window.devicePixelRatio || 1
-    const rect = canvas.getBoundingClientRect()
-    // Use a default size if rect is not available yet
-    const defaultSize = 500
-    const size = rect.width > 0 && rect.height > 0 
-      ? Math.min(rect.width, rect.height) 
-      : defaultSize
+      // Handle high DPI displays
+      const dpr = window.devicePixelRatio || 1
+      const rect = canvas.getBoundingClientRect()
+      // Use a default size if rect is not available yet
+      const defaultSize = 500
+      const size = rect.width > 0 && rect.height > 0 
+        ? Math.min(rect.width, rect.height) 
+        : defaultSize
     
     canvas.width = size * dpr
     canvas.height = size * dpr
@@ -93,6 +94,9 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
     ctx.lineTo(centerX + 15, centerY - radius - 5)
     ctx.closePath()
     ctx.fill()
+    } catch (error) {
+      console.error('Error drawing wheel:', error)
+    }
   }
 
   useEffect(() => {
