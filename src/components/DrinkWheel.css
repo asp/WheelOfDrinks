@@ -17,15 +17,16 @@
   min-height: 500px;
   border-radius: 50%;
   box-shadow: 
-    0 0 60px rgba(88, 166, 255, 0.2),
-    0 0 120px rgba(88, 166, 255, 0.1),
-    inset 0 0 60px rgba(0, 0, 0, 0.4),
-    0 20px 60px rgba(0, 0, 0, 0.5);
-  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+    0 0 80px rgba(88, 166, 255, 0.25),
+    0 0 150px rgba(88, 166, 255, 0.15),
+    inset 0 0 80px rgba(0, 0, 0, 0.5),
+    0 25px 80px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 3px rgba(88, 166, 255, 0.3);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 50%, var(--bg-secondary) 100%);
   padding: 12px;
   border: 3px solid var(--border-color);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  animation: wheelPulse 2s ease-in-out infinite;
+  animation: wheelPulse 3s ease-in-out infinite;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -35,17 +36,21 @@
 @keyframes wheelPulse {
   0%, 100% {
     box-shadow: 
-      0 0 60px rgba(88, 166, 255, 0.2),
-      0 0 120px rgba(88, 166, 255, 0.1),
-      inset 0 0 60px rgba(0, 0, 0, 0.4),
-      0 20px 60px rgba(0, 0, 0, 0.5);
+      0 0 80px rgba(88, 166, 255, 0.25),
+      0 0 150px rgba(88, 166, 255, 0.15),
+      inset 0 0 80px rgba(0, 0, 0, 0.5),
+      0 25px 80px rgba(0, 0, 0, 0.6),
+      inset 0 0 0 3px rgba(88, 166, 255, 0.3);
+    transform: scale(1);
   }
   50% {
     box-shadow: 
-      0 0 80px rgba(88, 166, 255, 0.3),
-      0 0 140px rgba(88, 166, 255, 0.15),
-      inset 0 0 60px rgba(0, 0, 0, 0.4),
-      0 20px 60px rgba(0, 0, 0, 0.5);
+      0 0 100px rgba(88, 166, 255, 0.35),
+      0 0 180px rgba(88, 166, 255, 0.2),
+      inset 0 0 80px rgba(0, 0, 0, 0.5),
+      0 25px 80px rgba(0, 0, 0, 0.6),
+      inset 0 0 0 3px rgba(88, 166, 255, 0.5);
+    transform: scale(1.01);
   }
 }
 
@@ -57,7 +62,12 @@
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
   margin: 0 auto;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4));
+  transition: filter 0.3s ease;
+}
+
+.wheel-wrapper:hover .wheel-canvas {
+  filter: drop-shadow(0 8px 30px rgba(88, 166, 255, 0.3));
 }
 
 .spin-button {
@@ -79,6 +89,22 @@
   text-transform: uppercase;
   letter-spacing: 0.15em;
   transform: translateY(0);
+  animation: buttonIdle 2s ease-in-out infinite;
+}
+
+@keyframes buttonIdle {
+  0%, 100% {
+    box-shadow: 
+      0 4px 20px rgba(88, 166, 255, 0.4),
+      0 0 40px rgba(88, 166, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 6px 25px rgba(88, 166, 255, 0.5),
+      0 0 50px rgba(88, 166, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
 }
 
 .spin-button::before {
@@ -88,8 +114,8 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .spin-button:hover:not(:disabled)::before {
@@ -97,26 +123,33 @@
 }
 
 .spin-button:hover:not(:disabled) {
-  transform: translateY(-3px) scale(1.02);
+  transform: translateY(-4px) scale(1.05);
   box-shadow: 
-    0 6px 30px rgba(88, 166, 255, 0.5),
-    0 0 60px rgba(88, 166, 255, 0.3),
+    0 8px 35px rgba(88, 166, 255, 0.6),
+    0 0 70px rgba(88, 166, 255, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: none;
 }
 
 .spin-button:active:not(:disabled) {
-  transform: translateY(-1px) scale(0.98);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .spin-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: translateY(0);
+  animation: none;
 }
 
 .spin-button-text {
   position: relative;
   z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.spin-button:hover:not(:disabled) .spin-button-text {
+  transform: scale(1.05);
 }
 
 .spin-button-glow {
@@ -126,14 +159,14 @@
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5), transparent);
   transform: translate(-50%, -50%);
-  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1), height 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .spin-button:hover:not(:disabled) .spin-button-glow {
-  width: 400px;
-  height: 400px;
+  width: 450px;
+  height: 450px;
 }
 
 @media (max-width: 768px) {

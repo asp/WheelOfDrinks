@@ -28,103 +28,173 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning, trig
       canvas.style.width = fixedSize + 'px'
       canvas.style.height = fixedSize + 'px'
 
-    const ctx = canvas.getContext('2d')
-    
-    // Reset transform and scale for high DPI
-    ctx.setTransform(1, 0, 0, 1, 0, 0)
-    ctx.scale(dpr, dpr)
-    
-    // Calculate center based on fixed size (not scaled)
-    const centerX = fixedSize / 2
-    const centerY = fixedSize / 2
-    const radius = fixedSize / 2 - 10
+      const ctx = canvas.getContext('2d')
+      
+      // Reset transform and scale for high DPI
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
+      ctx.scale(dpr, dpr)
+      
+      // Calculate center based on fixed size (not scaled)
+      const centerX = fixedSize / 2
+      const centerY = fixedSize / 2
+      const radius = fixedSize / 2 - 12
 
-    // Clear entire canvas
-    ctx.clearRect(0, 0, fixedSize, fixedSize)
+      // Clear entire canvas
+      ctx.clearRect(0, 0, fixedSize, fixedSize)
 
-    // Draw segments - ensure equal distribution and perfect circle closure
-    drinks.forEach((drink, index) => {
-      // Calculate angles precisely to ensure even distribution
-      // Start from top (-π/2) and distribute evenly
-      const startAngle = (index * anglePerSegment) - Math.PI / 2
-      // For the last segment, ensure it closes perfectly to complete the circle
-      const endAngle = index === numSegments - 1 
-        ? (Math.PI * 3 / 2) // Exactly 270 degrees (top) to close the circle
-        : ((index + 1) * anglePerSegment) - Math.PI / 2
-
-      // Alternate colors for visual distinction with new color scheme
-      const isEven = index % 2 === 0
-      ctx.fillStyle = isEven ? '#161b22' : '#1c2128'
-      ctx.strokeStyle = '#30363d'
-      ctx.lineWidth = 2.5
-
+      // Draw outer glow ring
+      const outerGradient = ctx.createRadialGradient(centerX, centerY, radius - 5, centerX, centerY, radius + 10)
+      outerGradient.addColorStop(0, 'rgba(88, 166, 255, 0.2)')
+      outerGradient.addColorStop(1, 'transparent')
+      ctx.fillStyle = outerGradient
       ctx.beginPath()
-      ctx.moveTo(centerX, centerY)
-      // Use counterclockwise: false to draw in the correct direction
-      ctx.arc(centerX, centerY, radius, startAngle, endAngle, false)
-      ctx.lineTo(centerX, centerY) // Explicitly close the path
-      ctx.closePath()
+      ctx.arc(centerX, centerY, radius + 8, 0, 2 * Math.PI)
       ctx.fill()
-      ctx.stroke()
 
-      // Draw text
-      ctx.save()
-      ctx.translate(centerX, centerY)
-      ctx.rotate(startAngle + anglePerSegment / 2)
-      ctx.textAlign = 'left'
-      ctx.textBaseline = 'middle'
-      ctx.fillStyle = '#f0f6fc'
+      // Draw segments with enhanced visuals
+      drinks.forEach((drink, index) => {
+        const startAngle = (index * anglePerSegment) - Math.PI / 2
+        const endAngle = index === numSegments - 1 
+          ? (Math.PI * 3 / 2)
+          : ((index + 1) * anglePerSegment) - Math.PI / 2
+
+        // Enhanced color scheme with subtle gradients
+        const isEven = index % 2 === 0
+        const segmentGradient = ctx.createRadialGradient(
+          centerX + Math.cos(startAngle + anglePerSegment / 2) * (radius * 0.3),
+          centerY + Math.sin(startAngle + anglePerSegment / 2) * (radius * 0.3),
+          0,
+          centerX,
+          centerY,
+          radius
+        )
+        
+        if (isEven) {
+          segmentGradient.addColorStop(0, '#1c2128')
+          segmentGradient.addColorStop(0.5, '#161b22')
+          segmentGradient.addColorStop(1, '#0d1117')
+        } else {
+          segmentGradient.addColorStop(0, '#21262d')
+          segmentGradient.addColorStop(0.5, '#1c2128')
+          segmentGradient.addColorStop(1, '#161b22')
+        }
+        
+        ctx.fillStyle = segmentGradient
+        ctx.strokeStyle = '#30363d'
+        ctx.lineWidth = 2.5
+
+        ctx.beginPath()
+        ctx.moveTo(centerX, centerY)
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle, false)
+        ctx.lineTo(centerX, centerY)
+        ctx.closePath()
+        ctx.fill()
+        ctx.stroke()
+
+        // Add subtle inner highlight
+        ctx.save()
+        ctx.globalAlpha = 0.3
+        const highlightGradient = ctx.createLinearGradient(
+          centerX + Math.cos(startAngle + anglePerSegment / 2) * (radius * 0.2),
+          centerY + Math.sin(startAngle + anglePerSegment / 2) * (radius * 0.2),
+          centerX,
+          centerY
+        )
+        highlightGradient.addColorStop(0, 'rgba(88, 166, 255, 0.4)')
+        highlightGradient.addColorStop(1, 'transparent')
+        ctx.fillStyle = highlightGradient
+        ctx.fill()
+        ctx.restore()
+
+        // Draw text with enhanced styling
+        ctx.save()
+        ctx.translate(centerX, centerY)
+        ctx.rotate(startAngle + anglePerSegment / 2)
+        ctx.textAlign = 'left'
+        ctx.textBaseline = 'middle'
+        
+        const fontSize = Math.max(12, fixedSize / 32)
+        ctx.font = `700 ${fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`
+        
+        // Text with gradient
+        const textGradient = ctx.createLinearGradient(0, -10, 0, 10)
+        textGradient.addColorStop(0, '#f0f6fc')
+        textGradient.addColorStop(0.5, '#c9d1d9')
+        textGradient.addColorStop(1, '#f0f6fc')
+        ctx.fillStyle = textGradient
+        
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)'
+        ctx.shadowBlur = 6
+        ctx.shadowOffsetX = 2
+        ctx.shadowOffsetY = 2
+        
+        const text = drink.name.length > 15 
+          ? drink.name.substring(0, 12) + '...' 
+          : drink.name
+        
+        ctx.fillText(text, radius * 0.58, 0)
+        ctx.shadowBlur = 0
+        ctx.shadowOffsetX = 0
+        ctx.shadowOffsetY = 0
+        ctx.restore()
+      })
+
+      // Enhanced center circle with multiple layers
+      const centerGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 40)
+      centerGradient.addColorStop(0, '#0d1117')
+      centerGradient.addColorStop(0.6, '#161b22')
+      centerGradient.addColorStop(1, '#1c2128')
+      ctx.fillStyle = centerGradient
+      ctx.beginPath()
+      ctx.arc(centerX, centerY, 40, 0, 2 * Math.PI)
+      ctx.fill()
       
-      // Scale font size based on fixed canvas size
-      const fontSize = Math.max(11, fixedSize / 34)
-      ctx.font = `600 ${fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`
+      // Center ring with glow
+      ctx.strokeStyle = '#58a6ff'
+      ctx.lineWidth = 4
+      ctx.shadowColor = 'rgba(88, 166, 255, 0.8)'
+      ctx.shadowBlur = 15
+      ctx.beginPath()
+      ctx.arc(centerX, centerY, 40, 0, 2 * Math.PI)
+      ctx.stroke()
       
-      // Add text shadow effect
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
-      ctx.shadowBlur = 4
-      ctx.shadowOffsetX = 1
-      ctx.shadowOffsetY = 1
+      // Inner center highlight
+      ctx.fillStyle = 'rgba(88, 166, 255, 0.2)'
+      ctx.beginPath()
+      ctx.arc(centerX, centerY, 25, 0, 2 * Math.PI)
+      ctx.fill()
       
-      const text = drink.name.length > 15 
-        ? drink.name.substring(0, 12) + '...' 
-        : drink.name
-      
-      ctx.fillText(text, radius * 0.6, 0)
       ctx.shadowBlur = 0
+
+      // Enhanced pointer with multiple layers
+      const pointerGradient = ctx.createLinearGradient(
+        centerX, centerY - radius - 25, 
+        centerX, centerY - radius - 5
+      )
+      pointerGradient.addColorStop(0, '#7c3aed')
+      pointerGradient.addColorStop(0.5, '#58a6ff')
+      pointerGradient.addColorStop(1, '#7c3aed')
+      
+      ctx.fillStyle = pointerGradient
+      ctx.shadowColor = 'rgba(88, 166, 255, 0.9)'
+      ctx.shadowBlur = 20
       ctx.shadowOffsetX = 0
       ctx.shadowOffsetY = 0
-      ctx.restore()
-    })
-
-    // Draw center circle with gradient effect
-    const centerGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 35)
-    centerGradient.addColorStop(0, '#0d1117')
-    centerGradient.addColorStop(1, '#161b22')
-    ctx.fillStyle = centerGradient
-    ctx.beginPath()
-    ctx.arc(centerX, centerY, 35, 0, 2 * Math.PI)
-    ctx.fill()
-    ctx.strokeStyle = '#58a6ff'
-    ctx.lineWidth = 3.5
-    ctx.shadowColor = 'rgba(88, 166, 255, 0.5)'
-    ctx.shadowBlur = 8
-    ctx.stroke()
-    ctx.shadowBlur = 0
-
-    // Draw pointer with gradient
-    const pointerGradient = ctx.createLinearGradient(centerX, centerY - radius - 25, centerX, centerY - radius - 5)
-    pointerGradient.addColorStop(0, '#7c3aed')
-    pointerGradient.addColorStop(1, '#58a6ff')
-    ctx.fillStyle = pointerGradient
-    ctx.shadowColor = 'rgba(88, 166, 255, 0.6)'
-    ctx.shadowBlur = 12
-    ctx.beginPath()
-    ctx.moveTo(centerX, centerY - radius - 20)
-    ctx.lineTo(centerX - 15, centerY - radius - 5)
-    ctx.lineTo(centerX + 18, centerY - radius - 5)
-    ctx.closePath()
-    ctx.fill()
-    ctx.shadowBlur = 0
+      
+      ctx.beginPath()
+      ctx.moveTo(centerX, centerY - radius - 22)
+      ctx.lineTo(centerX - 18, centerY - radius - 5)
+      ctx.lineTo(centerX + 18, centerY - radius - 5)
+      ctx.closePath()
+      ctx.fill()
+      
+      // Pointer outline
+      ctx.strokeStyle = '#f0f6fc'
+      ctx.lineWidth = 2
+      ctx.shadowBlur = 0
+      ctx.stroke()
+      
+      ctx.shadowBlur = 0
     } catch (error) {
       console.error('Error drawing wheel:', error)
     }
@@ -133,9 +203,8 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning, trig
   useEffect(() => {
     if (numSegments === 0) return
     
-    // Use a small delay to ensure the canvas is rendered
     const timer = setTimeout(() => {
-      setRotation(0) // Reset rotation when drinks change
+      setRotation(0)
       drawWheel()
     }, 100)
     
@@ -153,28 +222,24 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning, trig
   // Handle external spin trigger
   useEffect(() => {
     if (triggerSpin > 0 && !isAnimating && !isSpinning && numSegments > 0) {
-      // Call spin function directly
       if (isAnimating || isSpinning) return
 
       onSpinStart()
       setIsAnimating(true)
 
-      // Random rotation (multiple full spins + random segment)
-      const spins = 5 + Math.random() * 3 // 5-8 full spins
+      const spins = 5 + Math.random() * 3
       const randomSegment = Math.floor(Math.random() * numSegments)
       const targetRotation = spins * 360 + (randomSegment * (360 / numSegments))
       const finalRotation = rotation + targetRotation
 
-      // Animate
       const startRotation = rotation
-      const duration = 3000 // 3 seconds
+      const duration = 3000
       const startTime = performance.now()
 
       const animate = (currentTime) => {
         const elapsed = currentTime - startTime
         const progress = Math.min(elapsed / duration, 1)
 
-        // Easing function (ease-out-cubic)
         const easeOut = 1 - Math.pow(1 - progress, 3)
         const currentRotation = startRotation + (targetRotation * easeOut)
 
@@ -186,12 +251,8 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning, trig
           setIsAnimating(false)
           setRotation(finalRotation)
           
-          // Determine selected drink - account for the -90 degree offset (starting at top)
-          // Normalize rotation to 0-360 range
           const normalizedRotation = ((finalRotation % 360) + 360) % 360
-          // Add 90 degrees because we start at top (-π/2 = -90°)
           const adjustedRotation = (normalizedRotation + 90) % 360
-          // Calculate which segment the pointer is on
           const segmentIndex = Math.floor(adjustedRotation / (360 / numSegments)) % numSegments
           
           setTimeout(() => {
@@ -213,22 +274,19 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning, trig
     onSpinStart()
     setIsAnimating(true)
 
-    // Random rotation (multiple full spins + random segment)
-    const spins = 5 + Math.random() * 3 // 5-8 full spins
+    const spins = 5 + Math.random() * 3
     const randomSegment = Math.floor(Math.random() * numSegments)
     const targetRotation = spins * 360 + (randomSegment * (360 / numSegments))
     const finalRotation = rotation + targetRotation
 
-    // Animate
     const startRotation = rotation
-    const duration = 3000 // 3 seconds
+    const duration = 3000
     const startTime = performance.now()
 
     const animate = (currentTime) => {
       const elapsed = currentTime - startTime
       const progress = Math.min(elapsed / duration, 1)
 
-      // Easing function (ease-out-cubic)
       const easeOut = 1 - Math.pow(1 - progress, 3)
       const currentRotation = startRotation + (targetRotation * easeOut)
 
@@ -240,12 +298,8 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning, trig
         setIsAnimating(false)
         setRotation(finalRotation)
         
-        // Determine selected drink - account for the -90 degree offset (starting at top)
-        // Normalize rotation to 0-360 range
         const normalizedRotation = ((finalRotation % 360) + 360) % 360
-        // Add 90 degrees because we start at top (-π/2 = -90°)
         const adjustedRotation = (normalizedRotation + 90) % 360
-        // Calculate which segment the pointer is on
         const segmentIndex = Math.floor(adjustedRotation / (360 / numSegments)) % numSegments
         
         setTimeout(() => {
@@ -271,7 +325,7 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning, trig
   }
 
   return (
-    <div className="drink-wheel-container">
+    <div className="drink-wheel-container" ref={wheelRef}>
       <div
         className="wheel-wrapper"
         style={{
@@ -282,11 +336,11 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning, trig
         <canvas
           ref={canvasRef}
           className="wheel-canvas"
-          width={500}
-          height={500}
+          width={480}
+          height={480}
         />
       </div>
-      
+
       <button
         ref={spinButtonRef}
         className="spin-button"
