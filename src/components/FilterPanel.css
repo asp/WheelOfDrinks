@@ -17,7 +17,7 @@
 }
 
 .filter-panel-sidebar .filter-content {
-  max-height: calc(100vh - 300px);
+  max-height: calc(100vh - 250px);
   overflow-y: auto;
 }
 
