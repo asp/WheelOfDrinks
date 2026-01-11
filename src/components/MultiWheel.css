@@ -1,0 +1,278 @@
+.multi-wheel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.wheel-stage-indicator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.stage-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.stage-dot.active {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  transform: scale(1.1);
+}
+
+.stage-dot.completed {
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+  color: var(--text-primary);
+}
+
+.stage-dot.completed::after {
+  content: '✓';
+  position: absolute;
+  font-size: 1.2rem;
+}
+
+.stage-line {
+  flex: 1;
+  height: 3px;
+  background: var(--border-color);
+  border-radius: 2px;
+  transition: all 0.4s ease;
+}
+
+.stage-dot.active ~ .stage-line,
+.stage-dot.completed ~ .stage-line {
+  background: linear-gradient(90deg, var(--accent-secondary), var(--accent-primary));
+}
+
+.wheel-stage-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.wheel-wrapper {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  min-width: 500px;
+  min-height: 500px;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 80px rgba(168, 85, 247, 0.25),
+    0 0 150px rgba(168, 85, 247, 0.15),
+    inset 0 0 80px rgba(0, 0, 0, 0.5),
+    0 25px 80px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 3px rgba(168, 85, 247, 0.3);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 50%, var(--bg-secondary) 100%);
+  padding: 12px;
+  border: 3px solid var(--border-color);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: wheelPulse 3s ease-in-out infinite;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes wheelPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 80px rgba(168, 85, 247, 0.25),
+      0 0 150px rgba(168, 85, 247, 0.15),
+      inset 0 0 80px rgba(0, 0, 0, 0.5),
+      0 25px 80px rgba(0, 0, 0, 0.6),
+      inset 0 0 0 3px rgba(168, 85, 247, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 
+      0 0 100px rgba(168, 85, 247, 0.35),
+      0 0 180px rgba(168, 85, 247, 0.2),
+      inset 0 0 80px rgba(0, 0, 0, 0.5),
+      0 25px 80px rgba(0, 0, 0, 0.6),
+      inset 0 0 0 3px rgba(168, 85, 247, 0.5);
+    transform: scale(1.01);
+  }
+}
+
+.wheel-canvas {
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  margin: 0 auto;
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4));
+  transition: filter 0.3s ease;
+}
+
+.wheel-wrapper:hover .wheel-canvas {
+  filter: drop-shadow(0 8px 30px rgba(168, 85, 247, 0.3));
+}
+
+.spin-button {
+  position: relative;
+  padding: 1.5rem 4rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 
+    0 4px 20px rgba(168, 85, 247, 0.4),
+    0 0 40px rgba(168, 85, 247, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  transform: translateY(0);
+  animation: buttonIdle 2s ease-in-out infinite;
+}
+
+@keyframes buttonIdle {
+  0%, 100% {
+    box-shadow: 
+      0 4px 20px rgba(168, 85, 247, 0.4),
+      0 0 40px rgba(168, 85, 247, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 6px 25px rgba(168, 85, 247, 0.5),
+      0 0 50px rgba(168, 85, 247, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+}
+
+.spin-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.spin-button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.spin-button:hover:not(:disabled) {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 
+    0 8px 35px rgba(168, 85, 247, 0.6),
+    0 0 70px rgba(168, 85, 247, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: none;
+}
+
+.spin-button:active:not(:disabled) {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.spin-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: translateY(0);
+  animation: none;
+}
+
+.spin-button-text {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.spin-button:hover:not(:disabled) .spin-button-text {
+  transform: scale(1.05);
+}
+
+.spin-button-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5), transparent);
+  transform: translate(-50%, -50%);
+  transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1), height 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.spin-button:hover:not(:disabled) .spin-button-glow {
+  width: 450px;
+  height: 450px;
+}
+
+.no-items-message {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+  border-radius: 20px;
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+  max-width: 500px;
+  box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 768px) {
+  .wheel-wrapper {
+    width: 350px;
+    height: 350px;
+    min-width: 350px;
+    min-height: 350px;
+  }
+
+  .wheel-canvas {
+    width: 326px;
+    height: 326px;
+  }
+
+  .spin-button {
+    padding: 1.25rem 3rem;
+    font-size: 1.25rem;
+  }
+
+  .wheel-stage-title {
+    font-size: 1.25rem;
+  }
+
+  .stage-dot {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+}

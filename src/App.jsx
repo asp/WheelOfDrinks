@@ -1,13 +1,11 @@
-import { useState, useMemo } from 'react'
-import DrinkWheel from './components/DrinkWheel'
+import { useState } from 'react'
+import MultiWheel from './components/MultiWheel'
 import DrinkResult from './components/DrinkResult'
 import FilterPanel from './components/FilterPanel'
-import { filterDrinks } from './utils/filterDrinks'
 import './App.css'
 
 function App() {
-  const [selectedDrink, setSelectedDrink] = useState(null)
-  const [isSpinning, setIsSpinning] = useState(false)
+  const [selectedResult, setSelectedResult] = useState(null)
   const [showResult, setShowResult] = useState(false)
   const [triggerSpin, setTriggerSpin] = useState(0)
   const [filters, setFilters] = useState({
@@ -19,26 +17,14 @@ function App() {
     noSugar: [],
   })
 
-  const filteredDrinks = useMemo(() => {
-    return filterDrinks(filters)
-  }, [filters])
-
-  const handleSpinComplete = (drink) => {
-    setSelectedDrink(drink)
-    setIsSpinning(false)
+  const handleWheelComplete = (result) => {
+    setSelectedResult(result)
     setShowResult(true)
-  }
-
-  const handleSpinStart = () => {
-    setIsSpinning(true)
-    setShowResult(false)
-    setSelectedDrink(null)
   }
 
   const handleReset = () => {
     setShowResult(false)
-    setSelectedDrink(null)
-    // Trigger a new spin automatically after a brief delay
+    setSelectedResult(null)
     setTimeout(() => {
       setTriggerSpin(prev => prev + 1)
     }, 300)
@@ -46,9 +32,8 @@ function App() {
 
   const handleFiltersChange = (newFilters) => {
     setFilters(newFilters)
-    // Reset selection when filters change
     setShowResult(false)
-    setSelectedDrink(null)
+    setSelectedResult(null)
   }
 
   return (
@@ -64,33 +49,53 @@ function App() {
           <FilterPanel
             filters={filters}
             onFiltersChange={handleFiltersChange}
-            availableCount={filteredDrinks.length}
+            availableCount={0}
           />
         </aside>
 
         <main className="app-center">
           <div className="wheel-container">
-            <DrinkWheel
-              drinks={filteredDrinks}
-              onSpinComplete={handleSpinComplete}
-              onSpinStart={handleSpinStart}
-              isSpinning={isSpinning}
-              triggerSpin={triggerSpin}
-            />
+            {!showResult ? (
+              <MultiWheel
+                onComplete={handleWheelComplete}
+                triggerSpin={triggerSpin}
+              />
+            ) : (
+              <DrinkResult 
+                drink={{
+                  name: selectedResult.name,
+                  category: selectedResult.category,
+                  icon: selectedResult.icon
+                }} 
+                onReset={handleReset} 
+              />
+            )}
           </div>
         </main>
 
         <aside className="app-sidebar app-sidebar-right">
-          {showResult && selectedDrink ? (
-            <DrinkResult drink={selectedDrink} onReset={handleReset} />
+          {showResult && selectedResult ? (
+            <div className="result-details">
+              <div className="result-detail-item">
+                <span className="result-detail-label">Category:</span>
+                <span className="result-detail-value">{selectedResult.category}</span>
+              </div>
+              <div className="result-detail-item">
+                <span className="result-detail-label">Drink:</span>
+                <span className="result-detail-value">{selectedResult.drink}</span>
+              </div>
+              <div className="result-detail-item">
+                <span className="result-detail-label">Flavor:</span>
+                <span className="result-detail-value">{selectedResult.flavor}</span>
+              </div>
+            </div>
           ) : (
             <div className="result-placeholder">
-              <p>Spin the wheel to see your result here!</p>
+              <p>Spin the wheels to see your result here!</p>
             </div>
           )}
         </aside>
       </div>
-
     </div>
   )
 }
