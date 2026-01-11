@@ -153,9 +153,59 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning, trig
   // Handle external spin trigger
   useEffect(() => {
     if (triggerSpin > 0 && !isAnimating && !isSpinning && numSegments > 0) {
-      spin()
+      // Call spin function directly
+      if (isAnimating || isSpinning) return
+
+      onSpinStart()
+      setIsAnimating(true)
+
+      // Random rotation (multiple full spins + random segment)
+      const spins = 5 + Math.random() * 3 // 5-8 full spins
+      const randomSegment = Math.floor(Math.random() * numSegments)
+      const targetRotation = spins * 360 + (randomSegment * (360 / numSegments))
+      const finalRotation = rotation + targetRotation
+
+      // Animate
+      const startRotation = rotation
+      const duration = 3000 // 3 seconds
+      const startTime = performance.now()
+
+      const animate = (currentTime) => {
+        const elapsed = currentTime - startTime
+        const progress = Math.min(elapsed / duration, 1)
+
+        // Easing function (ease-out-cubic)
+        const easeOut = 1 - Math.pow(1 - progress, 3)
+        const currentRotation = startRotation + (targetRotation * easeOut)
+
+        setRotation(currentRotation)
+
+        if (progress < 1) {
+          requestAnimationFrame(animate)
+        } else {
+          setIsAnimating(false)
+          setRotation(finalRotation)
+          
+          // Determine selected drink - account for the -90 degree offset (starting at top)
+          // Normalize rotation to 0-360 range
+          const normalizedRotation = ((finalRotation % 360) + 360) % 360
+          // Add 90 degrees because we start at top (-π/2 = -90°)
+          const adjustedRotation = (normalizedRotation + 90) % 360
+          // Calculate which segment the pointer is on
+          const segmentIndex = Math.floor(adjustedRotation / (360 / numSegments)) % numSegments
+          
+          setTimeout(() => {
+            if (drinks[segmentIndex]) {
+              onSpinComplete(drinks[segmentIndex])
+            }
+          }, 500)
+        }
+      }
+
+      requestAnimationFrame(animate)
     }
-  }, [triggerSpin, isAnimating, isSpinning, numSegments])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerSpin])
 
   const spin = () => {
     if (isAnimating || isSpinning) return
