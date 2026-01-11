@@ -39,11 +39,15 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
     // Clear canvas
     ctx.clearRect(0, 0, size, size)
 
-    // Draw segments - ensure equal distribution
+    // Draw segments - ensure equal distribution and perfect circle closure
     drinks.forEach((drink, index) => {
       // Calculate angles precisely to ensure even distribution
+      // Start from top (-π/2) and distribute evenly
       const startAngle = (index * anglePerSegment) - Math.PI / 2
-      const endAngle = ((index + 1) * anglePerSegment) - Math.PI / 2
+      // For the last segment, ensure it closes perfectly to complete the circle
+      const endAngle = index === numSegments - 1 
+        ? (Math.PI * 3 / 2) // Exactly 270 degrees (top) to close the circle
+        : ((index + 1) * anglePerSegment) - Math.PI / 2
 
       // Alternate colors for visual distinction
       const isEven = index % 2 === 0
@@ -53,7 +57,9 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
 
       ctx.beginPath()
       ctx.moveTo(centerX, centerY)
-      ctx.arc(centerX, centerY, radius, startAngle, endAngle)
+      // Use counterclockwise: false to draw in the correct direction
+      ctx.arc(centerX, centerY, radius, startAngle, endAngle, false)
+      ctx.lineTo(centerX, centerY) // Explicitly close the path
       ctx.closePath()
       ctx.fill()
       ctx.stroke()
@@ -153,11 +159,13 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
         setIsAnimating(false)
         setRotation(finalRotation)
         
-        // Determine selected drink
-        const normalizedRotation = finalRotation % 360
-        const segmentIndex = Math.floor(
-          (360 - normalizedRotation) / (360 / numSegments)
-        ) % numSegments
+        // Determine selected drink - account for the -90 degree offset (starting at top)
+        // Normalize rotation to 0-360 range
+        const normalizedRotation = ((finalRotation % 360) + 360) % 360
+        // Add 90 degrees because we start at top (-π/2 = -90°)
+        const adjustedRotation = (normalizedRotation + 90) % 360
+        // Calculate which segment the pointer is on
+        const segmentIndex = Math.floor(adjustedRotation / (360 / numSegments)) % numSegments
         
         setTimeout(() => {
           if (drinks[segmentIndex]) {
