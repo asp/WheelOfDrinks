@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { drinkData } from '../data/drinks'
 import './MultiWheel.css'
 
-const MultiWheel = ({ onComplete, triggerSpin }) => {
+const MultiWheel = ({ onComplete, triggerSpin, onStageSelection }) => {
   const [stage, setStage] = useState('category') // 'category', 'drink', 'flavor'
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [selectedDrink, setSelectedDrink] = useState(null)
@@ -271,6 +271,9 @@ const MultiWheel = ({ onComplete, triggerSpin }) => {
   }
 
   const handleSelection = (selected) => {
+    if (onStageSelection) {
+      onStageSelection(stage, selected)
+    }
     if (stage === 'category') {
       setSelectedCategory(selected.name)
       setStage('drink')
@@ -332,6 +335,7 @@ const MultiWheel = ({ onComplete, triggerSpin }) => {
       <h2 className="wheel-stage-title">{getStageTitle()}</h2>
 
       <div className="wheel-wrapper">
+        <div className="wheel-pointer-overlay" />
         <div
           className="wheel-inner"
           style={{

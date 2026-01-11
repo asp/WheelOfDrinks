@@ -100,6 +100,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .wheel-inner {
@@ -111,6 +112,21 @@
   justify-content: center;
   transform-origin: center center;
   will-change: transform;
+  z-index: 1;
+}
+
+.wheel-pointer-overlay {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-bottom: 20px solid var(--accent-primary);
+  filter: drop-shadow(0 4px 10px rgba(125, 211, 252, 0.5));
+  z-index: 3;
 }
 
 @keyframes wheelPulse {
