@@ -51,11 +51,11 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
         ? (Math.PI * 3 / 2) // Exactly 270 degrees (top) to close the circle
         : ((index + 1) * anglePerSegment) - Math.PI / 2
 
-      // Alternate colors for visual distinction
+      // Alternate colors for visual distinction with new color scheme
       const isEven = index % 2 === 0
-      ctx.fillStyle = isEven ? '#1e1e2e' : '#27272a'
-      ctx.strokeStyle = '#3f3f46'
-      ctx.lineWidth = 2
+      ctx.fillStyle = isEven ? '#161b22' : '#1c2128'
+      ctx.strokeStyle = '#30363d'
+      ctx.lineWidth = 2.5
 
       ctx.beginPath()
       ctx.moveTo(centerX, centerY)
@@ -72,37 +72,58 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
       ctx.rotate(startAngle + anglePerSegment / 2)
       ctx.textAlign = 'left'
       ctx.textBaseline = 'middle'
-      ctx.fillStyle = '#e4e4e7'
+      ctx.fillStyle = '#f0f6fc'
       
       // Scale font size based on fixed canvas size
-      const fontSize = Math.max(10, fixedSize / 35)
-      ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`
+      const fontSize = Math.max(11, fixedSize / 34)
+      ctx.font = `600 ${fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`
+      
+      // Add text shadow effect
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'
+      ctx.shadowBlur = 4
+      ctx.shadowOffsetX = 1
+      ctx.shadowOffsetY = 1
       
       const text = drink.name.length > 15 
         ? drink.name.substring(0, 12) + '...' 
         : drink.name
       
       ctx.fillText(text, radius * 0.6, 0)
+      ctx.shadowBlur = 0
+      ctx.shadowOffsetX = 0
+      ctx.shadowOffsetY = 0
       ctx.restore()
     })
 
-    // Draw center circle
-    ctx.fillStyle = '#0a0a0f'
+    // Draw center circle with gradient effect
+    const centerGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 35)
+    centerGradient.addColorStop(0, '#0d1117')
+    centerGradient.addColorStop(1, '#161b22')
+    ctx.fillStyle = centerGradient
     ctx.beginPath()
-    ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI)
+    ctx.arc(centerX, centerY, 35, 0, 2 * Math.PI)
     ctx.fill()
-    ctx.strokeStyle = '#6366f1'
-    ctx.lineWidth = 3
+    ctx.strokeStyle = '#58a6ff'
+    ctx.lineWidth = 3.5
+    ctx.shadowColor = 'rgba(88, 166, 255, 0.5)'
+    ctx.shadowBlur = 8
     ctx.stroke()
+    ctx.shadowBlur = 0
 
-    // Draw pointer
-    ctx.fillStyle = '#6366f1'
+    // Draw pointer with gradient
+    const pointerGradient = ctx.createLinearGradient(centerX, centerY - radius - 25, centerX, centerY - radius - 5)
+    pointerGradient.addColorStop(0, '#7c3aed')
+    pointerGradient.addColorStop(1, '#58a6ff')
+    ctx.fillStyle = pointerGradient
+    ctx.shadowColor = 'rgba(88, 166, 255, 0.6)'
+    ctx.shadowBlur = 12
     ctx.beginPath()
     ctx.moveTo(centerX, centerY - radius - 20)
     ctx.lineTo(centerX - 15, centerY - radius - 5)
-    ctx.lineTo(centerX + 15, centerY - radius - 5)
+    ctx.lineTo(centerX + 18, centerY - radius - 5)
     ctx.closePath()
     ctx.fill()
+    ctx.shadowBlur = 0
     } catch (error) {
       console.error('Error drawing wheel:', error)
     }
