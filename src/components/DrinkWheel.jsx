@@ -17,7 +17,11 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
     // Handle high DPI displays
     const dpr = window.devicePixelRatio || 1
     const rect = canvas.getBoundingClientRect()
-    const size = Math.min(rect.width || 500, rect.height || 500)
+    // Use a default size if rect is not available yet
+    const defaultSize = 500
+    const size = rect.width > 0 && rect.height > 0 
+      ? Math.min(rect.width, rect.height) 
+      : defaultSize
     
     canvas.width = size * dpr
     canvas.height = size * dpr
@@ -93,15 +97,22 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
 
   useEffect(() => {
     if (numSegments === 0) return
-    setRotation(0) // Reset rotation when drinks change
-    drawWheel()
+    
+    // Use a small delay to ensure the canvas is rendered
+    const timer = setTimeout(() => {
+      setRotation(0) // Reset rotation when drinks change
+      drawWheel()
+    }, 100)
     
     const handleResize = () => {
       drawWheel()
     }
     
     window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('resize', handleResize)
+    }
   }, [drinks, numSegments, anglePerSegment])
 
   const spin = () => {
@@ -177,6 +188,8 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
         <canvas
           ref={canvasRef}
           className="wheel-canvas"
+          width={500}
+          height={500}
         />
       </div>
       
