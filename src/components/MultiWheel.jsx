@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { drinkData } from '../data/drinks'
 import './MultiWheel.css'
 
@@ -8,6 +8,7 @@ const MultiWheel = ({ onComplete, triggerSpin }) => {
   const [selectedDrink, setSelectedDrink] = useState(null)
   const [rotation, setRotation] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [autoSpinNext, setAutoSpinNext] = useState(false)
   const canvasRef = useRef(null)
 
   const getCurrentItems = () => {
@@ -35,7 +36,7 @@ const MultiWheel = ({ onComplete, triggerSpin }) => {
   const numSegments = items.length
   const anglePerSegment = numSegments > 0 ? (2 * Math.PI) / numSegments : 0
 
-  const drawWheel = () => {
+  const drawWheel = useCallback(() => {
     try {
       const canvas = canvasRef.current
       if (!canvas || numSegments === 0) return
@@ -183,7 +184,7 @@ const MultiWheel = ({ onComplete, triggerSpin }) => {
     } catch (error) {
       console.error('Error drawing wheel:', error)
     }
-  }
+  }, [items, numSegments, anglePerSegment])
 
   useEffect(() => {
     if (numSegments === 0) return
@@ -202,14 +203,27 @@ const MultiWheel = ({ onComplete, triggerSpin }) => {
       clearTimeout(timer)
       window.removeEventListener('resize', handleResize)
     }
-  }, [items, numSegments, anglePerSegment, stage, selectedCategory, selectedDrink])
+  }, [drawWheel, numSegments])
 
+  // Handle external spin trigger
   useEffect(() => {
     if (triggerSpin > 0 && !isAnimating && numSegments > 0) {
       spin()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerSpin])
+
+  // Auto-spin to next stage
+  useEffect(() => {
+    if (autoSpinNext && !isAnimating && numSegments > 0) {
+      const timer = setTimeout(() => {
+        spin()
+        setAutoSpinNext(false)
+      }, 800) // Brief pause between stages
+      return () => clearTimeout(timer)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoSpinNext, numSegments])
 
   const spin = () => {
     if (isAnimating || numSegments === 0) return
@@ -261,10 +275,14 @@ const MultiWheel = ({ onComplete, triggerSpin }) => {
       setSelectedCategory(selected.name)
       setStage('drink')
       setRotation(0)
+      // Auto-spin to next stage
+      setAutoSpinNext(true)
     } else if (stage === 'drink') {
       setSelectedDrink(selected.name)
       setStage('flavor')
       setRotation(0)
+      // Auto-spin to next stage
+      setAutoSpinNext(true)
     } else if (stage === 'flavor') {
       const finalResult = {
         category: selectedCategory,
@@ -334,7 +352,7 @@ const MultiWheel = ({ onComplete, triggerSpin }) => {
         disabled={isAnimating || numSegments === 0}
       >
         <span className="spin-button-text">
-          {isAnimating ? 'Spinning...' : 'SPIN'}
+          {isAnimating ? 'Spinning...' : stage === 'category' ? 'START SPIN' : 'SPIN'}
         </span>
         <span className="spin-button-glow"></span>
       </button>
