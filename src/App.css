@@ -94,15 +94,6 @@
   font-size: 1rem;
 }
 
-.app-footer {
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  padding: 0.75rem;
-  margin-top: auto;
-  flex-shrink: 0;
-  animation: fadeIn 1s ease-out;
-}
 
 @keyframes fadeIn {
   from {
