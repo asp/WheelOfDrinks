@@ -39,10 +39,11 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
     // Clear canvas
     ctx.clearRect(0, 0, size, size)
 
-    // Draw segments
+    // Draw segments - ensure equal distribution
     drinks.forEach((drink, index) => {
-      const startAngle = index * anglePerSegment - Math.PI / 2
-      const endAngle = (index + 1) * anglePerSegment - Math.PI / 2
+      // Calculate angles precisely to ensure even distribution
+      const startAngle = (index * anglePerSegment) - Math.PI / 2
+      const endAngle = ((index + 1) * anglePerSegment) - Math.PI / 2
 
       // Alternate colors for visual distinction
       const isEven = index % 2 === 0

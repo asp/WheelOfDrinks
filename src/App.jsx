@@ -14,6 +14,8 @@ function App() {
     noPackaging: [],
     noDairy: [],
     noWater: [],
+    noCategory: [],
+    noSugar: [],
   })
 
   const filteredDrinks = useMemo(() => {
@@ -46,36 +48,46 @@ function App() {
 
   return (
     <div className="app">
-      <div className="app-container">
-        <header className="app-header">
-          <h1 className="app-title">The Wheel of Drinks</h1>
-          <p className="app-subtitle">Spin to pick your gas station drink!</p>
-          <p className="app-author">by 0rt</p>
-        </header>
+      <header className="app-header">
+        <h1 className="app-title">The Wheel of Drinks</h1>
+        <p className="app-subtitle">Spin to pick your gas station drink!</p>
+        <p className="app-author">by 0rt</p>
+      </header>
 
-        <FilterPanel
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          availableCount={filteredDrinks.length}
-        />
-
-        <div className="wheel-container">
-          <DrinkWheel
-            drinks={filteredDrinks}
-            onSpinComplete={handleSpinComplete}
-            onSpinStart={handleSpinStart}
-            isSpinning={isSpinning}
+      <div className="app-main-layout">
+        <aside className="app-sidebar app-sidebar-left">
+          <FilterPanel
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+            availableCount={filteredDrinks.length}
           />
-        </div>
+        </aside>
 
-        {showResult && selectedDrink && (
-          <DrinkResult drink={selectedDrink} onReset={handleReset} />
-        )}
+        <main className="app-center">
+          <div className="wheel-container">
+            <DrinkWheel
+              drinks={filteredDrinks}
+              onSpinComplete={handleSpinComplete}
+              onSpinStart={handleSpinStart}
+              isSpinning={isSpinning}
+            />
+          </div>
+        </main>
 
-        <footer className="app-footer">
-          <p>The Wheel of Drinks by 0rt</p>
-        </footer>
+        <aside className="app-sidebar app-sidebar-right">
+          {showResult && selectedDrink ? (
+            <DrinkResult drink={selectedDrink} onReset={handleReset} />
+          ) : (
+            <div className="result-placeholder">
+              <p>Spin the wheel to see your result here!</p>
+            </div>
+          )}
+        </aside>
       </div>
+
+      <footer className="app-footer">
+        <p>The Wheel of Drinks by 0rt</p>
+      </footer>
     </div>
   )
 }

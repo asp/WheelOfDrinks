@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import './FilterPanel.css'
 
+const categories = ['Bottled', 'Energy', 'Sports', 'Tea', 'Juice', 'Water', 'Fountain', 'Coffee', 'Specialty']
+
 const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true) // Always expanded in sidebar
 
   const toggleFilter = (filterType, value) => {
     const newFilters = { ...filters }
@@ -26,6 +28,8 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
       noPackaging: [],
       noDairy: [],
       noWater: [],
+      noCategory: [],
+      noSugar: [],
     })
   }
 
@@ -33,10 +37,12 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
     (filters.noCaffeine?.length || 0) +
     (filters.noPackaging?.length || 0) +
     (filters.noDairy?.length || 0) +
-    (filters.noWater?.length || 0)
+    (filters.noWater?.length || 0) +
+    (filters.noCategory?.length || 0) +
+    (filters.noSugar?.length || 0)
 
   return (
-    <div className={`filter-panel ${isExpanded ? 'expanded' : ''}`}>
+    <div className={`filter-panel ${isExpanded ? 'expanded' : ''} filter-panel-sidebar`}>
       <div className="filter-header" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="filter-header-content">
           <span className="filter-icon">🔍</span>
@@ -50,6 +56,22 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
 
       {isExpanded && (
         <div className="filter-content">
+          <div className="filter-section">
+            <h3 className="filter-section-title">Exclude Categories</h3>
+            <div className="filter-options">
+              {categories.map(category => (
+                <label key={category} className="filter-option">
+                  <input
+                    type="checkbox"
+                    checked={filters.noCategory?.includes(category) || false}
+                    onChange={() => toggleFilter('noCategory', category)}
+                  />
+                  <span className="filter-option-label">No {category}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           <div className="filter-section">
             <h3 className="filter-section-title">Exclude Caffeine</h3>
             <div className="filter-options">
@@ -73,7 +95,7 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
                   checked={filters.noPackaging?.includes('fountain') || false}
                   onChange={() => toggleFilter('noPackaging', 'fountain')}
                 />
-                <span className="filter-option-label">No Fountain Drinks</span>
+                <span className="filter-option-label">No Fountain</span>
               </label>
               <label className="filter-option">
                 <input
@@ -81,7 +103,7 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
                   checked={filters.noPackaging?.includes('can') || false}
                   onChange={() => toggleFilter('noPackaging', 'can')}
                 />
-                <span className="filter-option-label">No Canned Drinks</span>
+                <span className="filter-option-label">No Cans</span>
               </label>
               <label className="filter-option">
                 <input
@@ -89,13 +111,13 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
                   checked={filters.noPackaging?.includes('bottle') || false}
                   onChange={() => toggleFilter('noPackaging', 'bottle')}
                 />
-                <span className="filter-option-label">No Bottled Drinks</span>
+                <span className="filter-option-label">No Bottles</span>
               </label>
             </div>
           </div>
 
           <div className="filter-section">
-            <h3 className="filter-section-title">Exclude Dairy</h3>
+            <h3 className="filter-section-title">Exclude Types</h3>
             <div className="filter-options">
               <label className="filter-option">
                 <input
@@ -105,12 +127,6 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
                 />
                 <span className="filter-option-label">No Dairy</span>
               </label>
-            </div>
-          </div>
-
-          <div className="filter-section">
-            <h3 className="filter-section-title">Exclude Water</h3>
-            <div className="filter-options">
               <label className="filter-option">
                 <input
                   type="checkbox"
@@ -118,6 +134,14 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
                   onChange={() => toggleFilter('noWater', 'water')}
                 />
                 <span className="filter-option-label">No Water</span>
+              </label>
+              <label className="filter-option">
+                <input
+                  type="checkbox"
+                  checked={filters.noSugar?.includes('sugar') || false}
+                  onChange={() => toggleFilter('noSugar', 'sugar')}
+                />
+                <span className="filter-option-label">No Diet/Zero</span>
               </label>
             </div>
           </div>
