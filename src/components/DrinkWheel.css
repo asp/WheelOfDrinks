@@ -1,0 +1,108 @@
+.drink-wheel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
+}
+
+.wheel-wrapper {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 40px rgba(99, 102, 241, 0.2),
+    0 0 80px rgba(99, 102, 241, 0.1),
+    inset 0 0 40px rgba(0, 0, 0, 0.3);
+  background: var(--bg-secondary);
+  padding: 10px;
+  border: 3px solid var(--border-color);
+}
+
+.wheel-canvas {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.spin-button {
+  position: relative;
+  padding: 1.25rem 3rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 15px rgba(99, 102, 241, 0.4),
+    0 0 30px rgba(99, 102, 241, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.spin-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(99, 102, 241, 0.5),
+    0 0 40px rgba(99, 102, 241, 0.3);
+}
+
+.spin-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.spin-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spin-button-text {
+  position: relative;
+  z-index: 2;
+}
+
+.spin-button-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.spin-button:hover:not(:disabled) .spin-button-glow {
+  width: 300px;
+  height: 300px;
+}
+
+@media (max-width: 768px) {
+  .wheel-wrapper {
+    width: 350px;
+    height: 350px;
+  }
+
+
+  .spin-button {
+    padding: 1rem 2.5rem;
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .wheel-wrapper {
+    width: 300px;
+    height: 300px;
+  }
+
+}
