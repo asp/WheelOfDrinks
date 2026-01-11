@@ -15,29 +15,31 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
       const canvas = canvasRef.current
       if (!canvas || numSegments === 0) return
 
+      // Use fixed size for consistent rendering
+      const fixedSize = 480
+      
       // Handle high DPI displays
       const dpr = window.devicePixelRatio || 1
-      const rect = canvas.getBoundingClientRect()
-      // Use a default size if rect is not available yet
-      const defaultSize = 500
-      const size = rect.width > 0 && rect.height > 0 
-        ? Math.min(rect.width, rect.height) 
-        : defaultSize
-    
-    canvas.width = size * dpr
-    canvas.height = size * dpr
-    canvas.style.width = size + 'px'
-    canvas.style.height = size + 'px'
+      
+      // Set canvas dimensions
+      canvas.width = fixedSize * dpr
+      canvas.height = fixedSize * dpr
+      canvas.style.width = fixedSize + 'px'
+      canvas.style.height = fixedSize + 'px'
 
     const ctx = canvas.getContext('2d')
+    
+    // Reset transform and scale for high DPI
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.scale(dpr, dpr)
     
-    const centerX = size / 2
-    const centerY = size / 2
-    const radius = size / 2 - 10
+    // Calculate center based on fixed size (not scaled)
+    const centerX = fixedSize / 2
+    const centerY = fixedSize / 2
+    const radius = fixedSize / 2 - 10
 
-    // Clear canvas
-    ctx.clearRect(0, 0, size, size)
+    // Clear entire canvas
+    ctx.clearRect(0, 0, fixedSize, fixedSize)
 
     // Draw segments - ensure equal distribution and perfect circle closure
     drinks.forEach((drink, index) => {
@@ -72,8 +74,8 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
       ctx.textBaseline = 'middle'
       ctx.fillStyle = '#e4e4e7'
       
-      // Scale font size based on canvas size
-      const fontSize = Math.max(10, size / 35)
+      // Scale font size based on fixed canvas size
+      const fontSize = Math.max(10, fixedSize / 35)
       ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`
       
       const text = drink.name.length > 15 
