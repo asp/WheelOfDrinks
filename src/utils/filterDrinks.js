@@ -17,6 +17,11 @@ export const filterDrinks = (filters) => {
       return false
     }
 
+    // Exclude water
+    if (filters.noWater?.includes('water') && drink.category === 'Water') {
+      return false
+    }
+
     return true
   })
 }

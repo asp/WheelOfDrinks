@@ -13,6 +13,7 @@ function App() {
     noCaffeine: [],
     noPackaging: [],
     noDairy: [],
+    noWater: [],
   })
 
   const filteredDrinks = useMemo(() => {

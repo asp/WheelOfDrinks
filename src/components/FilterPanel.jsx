@@ -25,13 +25,15 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
       noCaffeine: [],
       noPackaging: [],
       noDairy: [],
+      noWater: [],
     })
   }
 
   const activeFilterCount = 
     (filters.noCaffeine?.length || 0) +
     (filters.noPackaging?.length || 0) +
-    (filters.noDairy?.length || 0)
+    (filters.noDairy?.length || 0) +
+    (filters.noWater?.length || 0)
 
   return (
     <div className={`filter-panel ${isExpanded ? 'expanded' : ''}`}>
@@ -102,6 +104,20 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
                   onChange={() => toggleFilter('noDairy', 'dairy')}
                 />
                 <span className="filter-option-label">No Dairy</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="filter-section">
+            <h3 className="filter-section-title">Exclude Water</h3>
+            <div className="filter-options">
+              <label className="filter-option">
+                <input
+                  type="checkbox"
+                  checked={filters.noWater?.includes('water') || false}
+                  onChange={() => toggleFilter('noWater', 'water')}
+                />
+                <span className="filter-option-label">No Water</span>
               </label>
             </div>
           </div>
