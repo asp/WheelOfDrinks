@@ -225,6 +225,14 @@ const MultiWheel = ({ onComplete, triggerSpin, onStageSelection }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSpinNext, numSegments])
 
+  const getSegmentIndex = (finalRotationDeg) => {
+    // Pointer is fixed at top (-90deg) => 270deg in 0-360 space
+    const pointerDeg = 270
+    const normalizedRotation = ((finalRotationDeg % 360) + 360) % 360
+    const relative = (pointerDeg - normalizedRotation + 360) % 360
+    return Math.floor(relative / (360 / numSegments)) % numSegments
+  }
+
   const spin = () => {
     if (isAnimating || numSegments === 0) return
 
@@ -254,9 +262,7 @@ const MultiWheel = ({ onComplete, triggerSpin, onStageSelection }) => {
         setIsAnimating(false)
         setRotation(finalRotation)
         
-        const normalizedRotation = ((finalRotation % 360) + 360) % 360
-        const adjustedRotation = (normalizedRotation + 90) % 360
-        const segmentIndex = Math.floor(adjustedRotation / (360 / numSegments)) % numSegments
+        const segmentIndex = getSegmentIndex(finalRotation)
         
         setTimeout(() => {
           const selected = items[segmentIndex]
