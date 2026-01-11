@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "The Wheel of Drinks by 0rt - A sleek spinwheel web app for choosing American gas station drinks",
+  "homepage": "https://asp.github.io/WheelOfDrinks/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
