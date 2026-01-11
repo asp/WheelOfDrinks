@@ -9,6 +9,7 @@ function App() {
   const [selectedDrink, setSelectedDrink] = useState(null)
   const [isSpinning, setIsSpinning] = useState(false)
   const [showResult, setShowResult] = useState(false)
+  const [triggerSpin, setTriggerSpin] = useState(0)
   const [filters, setFilters] = useState({
     noCaffeine: [],
     noPackaging: [],
@@ -37,6 +38,10 @@ function App() {
   const handleReset = () => {
     setShowResult(false)
     setSelectedDrink(null)
+    // Trigger a new spin automatically after a brief delay
+    setTimeout(() => {
+      setTriggerSpin(prev => prev + 1)
+    }, 300)
   }
 
   const handleFiltersChange = (newFilters) => {
@@ -70,6 +75,7 @@ function App() {
               onSpinComplete={handleSpinComplete}
               onSpinStart={handleSpinStart}
               isSpinning={isSpinning}
+              triggerSpin={triggerSpin}
             />
           </div>
         </main>

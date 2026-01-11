@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
 import './DrinkWheel.css'
 
-const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) => {
+const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning, triggerSpin }) => {
   const [rotation, setRotation] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
   const wheelRef = useRef(null)
   const canvasRef = useRef(null)
+  const spinButtonRef = useRef(null)
 
   const numSegments = drinks.length
   const anglePerSegment = numSegments > 0 ? (2 * Math.PI) / numSegments : 0
@@ -149,6 +150,13 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
     }
   }, [drinks, numSegments, anglePerSegment])
 
+  // Handle external spin trigger
+  useEffect(() => {
+    if (triggerSpin > 0 && !isAnimating && !isSpinning && numSegments > 0) {
+      spin()
+    }
+  }, [triggerSpin, isAnimating, isSpinning, numSegments])
+
   const spin = () => {
     if (isAnimating || isSpinning) return
 
@@ -230,6 +238,7 @@ const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) =>
       </div>
       
       <button
+        ref={spinButtonRef}
         className="spin-button"
         onClick={spin}
         disabled={isAnimating || isSpinning || numSegments === 0}

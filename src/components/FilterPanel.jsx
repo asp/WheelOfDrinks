@@ -57,25 +57,25 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
       {isExpanded && (
         <div className="filter-content">
           <div className="filter-section">
-            <h3 className="filter-section-title">Exclude Categories</h3>
-            <div className="filter-options">
+            <h3 className="filter-section-title">Categories</h3>
+            <div className="filter-options-grid">
               {categories.map(category => (
-                <label key={category} className="filter-option">
+                <label key={category} className="filter-option-compact">
                   <input
                     type="checkbox"
                     checked={filters.noCategory?.includes(category) || false}
                     onChange={() => toggleFilter('noCategory', category)}
                   />
-                  <span className="filter-option-label">No {category}</span>
+                  <span className="filter-option-label">{category}</span>
                 </label>
               ))}
             </div>
           </div>
 
           <div className="filter-section">
-            <h3 className="filter-section-title">Exclude Caffeine</h3>
-            <div className="filter-options">
-              <label className="filter-option">
+            <h3 className="filter-section-title">Quick Filters</h3>
+            <div className="filter-options-grid">
+              <label className="filter-option-compact">
                 <input
                   type="checkbox"
                   checked={filters.noCaffeine?.includes('caffeine') || false}
@@ -83,43 +83,7 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
                 />
                 <span className="filter-option-label">No Caffeine</span>
               </label>
-            </div>
-          </div>
-
-          <div className="filter-section">
-            <h3 className="filter-section-title">Exclude Packaging</h3>
-            <div className="filter-options">
-              <label className="filter-option">
-                <input
-                  type="checkbox"
-                  checked={filters.noPackaging?.includes('fountain') || false}
-                  onChange={() => toggleFilter('noPackaging', 'fountain')}
-                />
-                <span className="filter-option-label">No Fountain</span>
-              </label>
-              <label className="filter-option">
-                <input
-                  type="checkbox"
-                  checked={filters.noPackaging?.includes('can') || false}
-                  onChange={() => toggleFilter('noPackaging', 'can')}
-                />
-                <span className="filter-option-label">No Cans</span>
-              </label>
-              <label className="filter-option">
-                <input
-                  type="checkbox"
-                  checked={filters.noPackaging?.includes('bottle') || false}
-                  onChange={() => toggleFilter('noPackaging', 'bottle')}
-                />
-                <span className="filter-option-label">No Bottles</span>
-              </label>
-            </div>
-          </div>
-
-          <div className="filter-section">
-            <h3 className="filter-section-title">Exclude Types</h3>
-            <div className="filter-options">
-              <label className="filter-option">
+              <label className="filter-option-compact">
                 <input
                   type="checkbox"
                   checked={filters.noDairy?.includes('dairy') || false}
@@ -127,7 +91,7 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
                 />
                 <span className="filter-option-label">No Dairy</span>
               </label>
-              <label className="filter-option">
+              <label className="filter-option-compact">
                 <input
                   type="checkbox"
                   checked={filters.noWater?.includes('water') || false}
@@ -135,7 +99,7 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
                 />
                 <span className="filter-option-label">No Water</span>
               </label>
-              <label className="filter-option">
+              <label className="filter-option-compact">
                 <input
                   type="checkbox"
                   checked={filters.noSugar?.includes('sugar') || false}
@@ -146,15 +110,45 @@ const FilterPanel = ({ filters, onFiltersChange, availableCount }) => {
             </div>
           </div>
 
+          <div className="filter-section">
+            <h3 className="filter-section-title">Packaging</h3>
+            <div className="filter-options-grid">
+              <label className="filter-option-compact">
+                <input
+                  type="checkbox"
+                  checked={filters.noPackaging?.includes('fountain') || false}
+                  onChange={() => toggleFilter('noPackaging', 'fountain')}
+                />
+                <span className="filter-option-label">No Fountain</span>
+              </label>
+              <label className="filter-option-compact">
+                <input
+                  type="checkbox"
+                  checked={filters.noPackaging?.includes('can') || false}
+                  onChange={() => toggleFilter('noPackaging', 'can')}
+                />
+                <span className="filter-option-label">No Cans</span>
+              </label>
+              <label className="filter-option-compact">
+                <input
+                  type="checkbox"
+                  checked={filters.noPackaging?.includes('bottle') || false}
+                  onChange={() => toggleFilter('noPackaging', 'bottle')}
+                />
+                <span className="filter-option-label">No Bottles</span>
+              </label>
+            </div>
+          </div>
+
           {activeFilterCount > 0 && (
             <button className="filter-clear" onClick={clearAllFilters}>
-              Clear All Filters
+              Clear All
             </button>
           )}
 
           <div className="filter-count">
             <span className="filter-count-text">
-              {availableCount} drink{availableCount !== 1 ? 's' : ''} available
+              {availableCount} available
             </span>
           </div>
         </div>
