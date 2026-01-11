@@ -52,6 +52,10 @@
   font-size: 1.2rem;
 }
 
+.stage-dot.completed span {
+  opacity: 0;
+}
+
 .stage-line {
   flex: 1;
   height: 3px;
