@@ -1,30 +1,18 @@
 import { useState, useRef, useEffect } from 'react'
-import { drinks } from '../data/drinks'
 import './DrinkWheel.css'
 
-const DrinkWheel = ({ onSpinComplete, onSpinStart, isSpinning }) => {
+const DrinkWheel = ({ drinks = [], onSpinComplete, onSpinStart, isSpinning }) => {
   const [rotation, setRotation] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
   const wheelRef = useRef(null)
   const canvasRef = useRef(null)
 
   const numSegments = drinks.length
-  const anglePerSegment = (2 * Math.PI) / numSegments
-
-  useEffect(() => {
-    drawWheel()
-    
-    const handleResize = () => {
-      drawWheel()
-    }
-    
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  const anglePerSegment = numSegments > 0 ? (2 * Math.PI) / numSegments : 0
 
   const drawWheel = () => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    if (!canvas || numSegments === 0) return
 
     // Handle high DPI displays
     const dpr = window.devicePixelRatio || 1
@@ -44,7 +32,7 @@ const DrinkWheel = ({ onSpinComplete, onSpinStart, isSpinning }) => {
     const radius = size / 2 - 10
 
     // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, size, size)
 
     // Draw segments
     drinks.forEach((drink, index) => {
@@ -103,6 +91,19 @@ const DrinkWheel = ({ onSpinComplete, onSpinStart, isSpinning }) => {
     ctx.fill()
   }
 
+  useEffect(() => {
+    if (numSegments === 0) return
+    setRotation(0) // Reset rotation when drinks change
+    drawWheel()
+    
+    const handleResize = () => {
+      drawWheel()
+    }
+    
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [drinks, numSegments, anglePerSegment])
+
   const spin = () => {
     if (isAnimating || isSpinning) return
 
@@ -143,12 +144,25 @@ const DrinkWheel = ({ onSpinComplete, onSpinStart, isSpinning }) => {
         ) % numSegments
         
         setTimeout(() => {
-          onSpinComplete(drinks[segmentIndex])
+          if (drinks[segmentIndex]) {
+            onSpinComplete(drinks[segmentIndex])
+          }
         }, 500)
       }
     }
 
     requestAnimationFrame(animate)
+  }
+
+  if (numSegments === 0) {
+    return (
+      <div className="drink-wheel-container">
+        <div className="no-drinks-message">
+          <p>No drinks available with current filters.</p>
+          <p className="no-drinks-hint">Adjust your filters to see drinks.</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -169,7 +183,7 @@ const DrinkWheel = ({ onSpinComplete, onSpinStart, isSpinning }) => {
       <button
         className="spin-button"
         onClick={spin}
-        disabled={isAnimating || isSpinning}
+        disabled={isAnimating || isSpinning || numSegments === 0}
       >
         <span className="spin-button-text">
           {isAnimating ? 'Spinning...' : 'SPIN'}

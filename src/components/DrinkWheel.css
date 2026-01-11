@@ -104,5 +104,24 @@
     width: 300px;
     height: 300px;
   }
+}
 
+.no-drinks-message {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+  border-radius: 16px;
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+  max-width: 500px;
+}
+
+.no-drinks-message p {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.no-drinks-hint {
+  font-size: 0.9rem;
+  opacity: 0.7;
 }

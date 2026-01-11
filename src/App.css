@@ -46,6 +46,10 @@
 .wheel-container {
   position: relative;
   animation: fadeInUp 0.8s ease-out;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .app-footer {
